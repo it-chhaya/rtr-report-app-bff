@@ -8,11 +8,6 @@ server:
 spring:
   application:
     name: report-app-bff
-#  security:
-#    oauth2:
-#      resourceserver:
-#        jwt:
-#          issuer-uri: https://oauth2-ac.istad.co/realms/rtr-ms
   security:
     oauth2:
       client:
@@ -20,11 +15,15 @@ spring:
           keycloak:
             issuer-uri: https://oauth2-ac.istad.co/realms/rtr-ms
         registration:
-          keycloak:
+          nextjs:
             provider: keycloak
             client-id: nextjs
             client-secret: SKV7H7WumZDxGmvmVoPt9fnSbJAi0Uf3
-            redirect-uri: http://localhost:8000
+            redirect-uri: http://localhost:8000/login/oauth2/code/nextjs
+            scope:
+              - openid # Auto issue access token
+              - profile # Get profile
+              - email # Get email
   profiles:
     active: dev
   config:
@@ -40,8 +39,6 @@ spring:
             locator:
               enabled: false
               lower-case-service-id: true
-          default-filters:
-            - SaveSession
           routes:
             - id: customer
               #uri: http://localhost:16800
