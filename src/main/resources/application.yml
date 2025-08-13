@@ -1,0 +1,76 @@
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${server.port}
+    prefer-ip-address: true
+    #hostname: localhost
+server:
+  port: 8000
+spring:
+  application:
+    name: report-app-bff
+#  security:
+#    oauth2:
+#      resourceserver:
+#        jwt:
+#          issuer-uri: https://oauth2-ac.istad.co/realms/rtr-ms
+  security:
+    oauth2:
+      client:
+        provider:
+          keycloak:
+            issuer-uri: https://oauth2-ac.istad.co/realms/rtr-ms
+        registration:
+          keycloak:
+            provider: keycloak
+            client-id: nextjs
+            client-secret: SKV7H7WumZDxGmvmVoPt9fnSbJAi0Uf3
+            redirect-uri: http://localhost:8000
+  profiles:
+    active: dev
+  config:
+    import: optional:configserver:http://localhost:8888
+  cloud:
+    config:
+      username: admin
+      password: admin@123
+    gateway:
+      server:
+        webflux:
+          discovery:
+            locator:
+              enabled: false
+              lower-case-service-id: true
+          default-filters:
+            - SaveSession
+          routes:
+            - id: customer
+              #uri: http://localhost:16800
+              uri: lb://customer
+              predicates:
+                - Path=/customer-service/**
+              filters:
+                - RewritePath=/customer-service/(?<segment>.*),/$\{segment}
+            - id: account
+              #uri: http://localhost:16800
+              uri: lb://account
+              predicates:
+                - Path=/account-service/**
+              filters:
+                - RewritePath=/account-service/(?<segment>.*),/$\{segment}
+            - id: nextjs
+              uri: http://localhost:3000
+              predicates:
+                - Path=/**
+  rabbitmq:
+    host: localhost
+    username: admin
+    password: password
+    port: 5672
+management:
+  endpoint:
+    gateway:
+      access: read_only
+  endpoints:
+    web:
+      exposure:
+        include: "*"
