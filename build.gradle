@@ -22,7 +22,6 @@ jib {
         // For private registry authentication
         auth {
             username = "it-chhaya"
-            password = "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"
         }
     }
 }
