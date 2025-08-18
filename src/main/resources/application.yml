@@ -1,3 +1,5 @@
+app:
+  base-url: http://localhost:${server.port}
 eureka:
   instance:
     instance-id: ${spring.application.name}:${server.port}
@@ -59,7 +61,7 @@ spring:
               predicates:
                 - Path=/**
   rabbitmq:
-    host: localhost
+    host: 34.87.180.247
     username: admin
     password: password
     port: 5672

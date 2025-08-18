@@ -27,7 +27,9 @@ public class SecurityConfig {
 
         http.authorizeExchange(exchange ->
                 exchange
+                        .pathMatchers("/logout").authenticated()
                         .pathMatchers("/dashboard/**").authenticated()
+                        .pathMatchers("/api/v1/users/**").authenticated()
                         .anyExchange().permitAll()
 
         );
@@ -35,29 +37,30 @@ public class SecurityConfig {
         http.csrf(ServerHttpSecurity.CsrfSpec::disable);
         http.formLogin(ServerHttpSecurity.FormLoginSpec::disable);
         http.httpBasic(ServerHttpSecurity.HttpBasicSpec::disable);
+        http.logout(ServerHttpSecurity.LogoutSpec::disable);
 
         http.oauth2Login(Customizer.withDefaults());
 
-        http.logout(logoutSpec ->
-                logoutSpec.logoutUrl("/logout")
-                        .logoutSuccessHandler(logoutSuccessHandler())
-        );
+//        http.logout(logoutSpec ->
+//                logoutSpec.logoutUrl("/logout")
+//                        .logoutSuccessHandler(logoutSuccessHandler())
+//        );
 
         return http.build();
     }
 
-    ServerLogoutSuccessHandler logoutSuccessHandler() {
-        RedirectServerLogoutSuccessHandler redirectServerLogoutSuccessHandler = new RedirectServerLogoutSuccessHandler();
-
-        String keycloakLogoutUrl = issuerUri + "/protocol/openid-connect/logout" +
-                "?client_id=" + clientId +
-                "&post_logout_redirect_uri=http://localhost:8000/";
-
-
-        URI logoutSuccessUrl = URI.create(keycloakLogoutUrl);
-        redirectServerLogoutSuccessHandler.setLogoutSuccessUrl(logoutSuccessUrl);
-
-        return redirectServerLogoutSuccessHandler;
-    }
+//    ServerLogoutSuccessHandler logoutSuccessHandler() {
+//        RedirectServerLogoutSuccessHandler redirectServerLogoutSuccessHandler = new RedirectServerLogoutSuccessHandler();
+//
+//        String keycloakLogoutUrl = issuerUri + "/protocol/openid-connect/logout" +
+//                "?client_id=" + clientId +
+//                "&post_logout_redirect_uri=http://localhost:8000/";
+//
+//
+//        URI logoutSuccessUrl = URI.create(keycloakLogoutUrl);
+//        redirectServerLogoutSuccessHandler.setLogoutSuccessUrl(logoutSuccessUrl);
+//
+//        return redirectServerLogoutSuccessHandler;
+//    }
 
 }
