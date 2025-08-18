@@ -1,5 +1,6 @@
 package kh.edu.cstad.reportappbff;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
@@ -17,7 +18,6 @@ public class UserController {
     @GetMapping("/me")
     public UserProfile me(@AuthenticationPrincipal Authentication auth) {
 
-        System.out.println("Auth:" + auth.getPrincipal());
         OAuth2AuthenticationToken oauth2 = (OAuth2AuthenticationToken) auth;
         OAuth2User oAuth2User = oauth2.getPrincipal();
         Map<String, Object> attributes = oAuth2User.getAttributes();
