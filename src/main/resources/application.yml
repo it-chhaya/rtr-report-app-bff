@@ -41,6 +41,10 @@ spring:
             locator:
               enabled: false
               lower-case-service-id: true
+          default-filters:
+            - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin Access-Control-Request-Headers
+            - SaveSession
+            - TokenRelay=
           routes:
             - id: customer
               #uri: http://localhost:16800
