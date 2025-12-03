@@ -1,5 +1,6 @@
 package kh.edu.cstad.reportappbff;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
@@ -14,6 +15,7 @@ import reactor.core.publisher.Mono;
 import java.net.URI;
 
 @Component
+@Slf4j
 public class LogoutGlobalFilter implements GlobalFilter {
 
     @Value("${app.base-url}")
@@ -27,6 +29,8 @@ public class LogoutGlobalFilter implements GlobalFilter {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+
+        log.info("LogoutGlobalFilter filtering: {}", issuerUri);
 
         ServerHttpRequest request = exchange.getRequest();
 

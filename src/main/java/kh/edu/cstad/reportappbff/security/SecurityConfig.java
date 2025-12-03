@@ -16,12 +16,6 @@ import java.net.URI;
 @EnableWebFluxSecurity
 public class SecurityConfig {
 
-    @Value("${spring.security.oauth2.client.provider.keycloak.issuer-uri}")
-    private String issuerUri;
-
-    @Value("${spring.security.oauth2.client.registration.nextjs.client-id}")
-    private String clientId;
-
     @Bean
     public SecurityWebFilterChain configureFilterChain(ServerHttpSecurity http) {
 

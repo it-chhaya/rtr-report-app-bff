@@ -4,7 +4,6 @@ eureka:
   instance:
     instance-id: ${spring.application.name}:${server.port}
     prefer-ip-address: true
-    #hostname: localhost
 server:
   port: 8000
 spring:
@@ -15,12 +14,12 @@ spring:
       client:
         provider:
           keycloak:
-            issuer-uri: https://oauth2-ac.istad.co/realms/rtr-ms
+            issuer-uri: http://localhost:8080/realms/rtr-ms
         registration:
           nextjs:
             provider: keycloak
             client-id: nextjs
-            client-secret: SKV7H7WumZDxGmvmVoPt9fnSbJAi0Uf3
+            client-secret: nSWtrvNvBZH6jfLBj42IWSG31TiuSBUi
             redirect-uri: http://localhost:8000/login/oauth2/code/nextjs
             scope:
               - openid # Auto issue access token
@@ -60,12 +59,13 @@ spring:
                 - Path=/account-service/**
               filters:
                 - RewritePath=/account-service/(?<segment>.*),/$\{segment}
+                - CircuitBreaker=accountCircuitBreaker #has to be registered in each route of gateway
             - id: nextjs
               uri: http://localhost:3000
               predicates:
                 - Path=/**
   rabbitmq:
-    host: 34.87.180.247
+    host: localhost
     username: admin
     password: password
     port: 5672
@@ -77,3 +77,29 @@ management:
     web:
       exposure:
         include: "*"
+  metrics:
+    tags:
+      application: ${spring.application.name}
+
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        # monitoring 10 requests before transition CLOSE into OPEN state
+        slidingWindowSize: 10
+        # This parameter defines that only 2 calls are permitted in the HALF_OPEN state.
+        # If these calls succeed, the CircuitBreaker may transition back to CLOSED; if they fail, it will return to OPEN
+        permittedNumberOfCallsInHalfOpenState: 2
+        # 50% of requests are failed, it will move into OPEN state
+        failureRateThreshold: 50
+        # wait 10 seconds in the OPEN state before attempting to test the downstream service again.
+        waitDurationInOpenState: 10000
+
+logging:
+  level:
+    kh:
+      edu:
+        cstad:
+          reportappbff: DEBUG
+  pattern:
+    level: "%5p [${spring.application.name},%X{trace_id},%X{span_id}]"
