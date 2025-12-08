@@ -7,6 +7,16 @@ eureka:
 server:
   port: 8000
 spring:
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password: qwer
+#      lettuce:
+#        pool:
+#          max-active: 8
+#          max-idle: 8
+#          min-idle: 0
   application:
     name: report-app-bff
   security:
@@ -58,8 +68,11 @@ spring:
               predicates:
                 - Path=/account-service/**
               filters:
-                - RewritePath=/account-service/(?<segment>.*),/$\{segment}
-                - CircuitBreaker=accountCircuitBreaker #has to be registered in each route of gateway
+              - RewritePath=/account-service/(?<segment>.*),/$\{segment}
+              - name: CircuitBreaker
+                args:
+                  name: accountCircuitBreaker
+                  fallbackUri: forward:/fallback/account-service/api/v1/accounts
             - id: nextjs
               uri: http://localhost:3000
               predicates:
